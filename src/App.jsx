@@ -144,7 +144,7 @@ function App() {
   
 
   const getLink = () => {
-    axios.get("http://43.204.214.221:3001/link")
+    axios.get("http://3.108.63.155:3001/link")
     .then((response) => {
       if(response.data[0] != undefined) {
         setLink(response.data[0].link);
@@ -167,7 +167,7 @@ function App() {
   };
 
   const deleteLink = () => {
-    axios.delete("http://43.204.214.221:3001/deletelink")
+    axios.delete("http://3.108.63.155:3001/deletelink")
     .then((response) => {
 
     })
