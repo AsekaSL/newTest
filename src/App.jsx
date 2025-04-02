@@ -5,13 +5,13 @@ import profile from './profile2.jpg';
 import axios from 'axios';
 
 // Admin Panel Component
-const AdminPanel = ({addLink,deleteLink}) => {
+const AdminPanel = ({addLink,deleteLink,link,setLink}) => {
   const [zoomLink, setZoomLink] = useState('');
   const [savedLink, setSavedLink] = useState('');
 
   useEffect(() => {
     // Load saved link from localStorage
-    const savedZoomLink = localStorage.getItem('zoomLink');
+    const savedZoomLink = link;
     if (savedZoomLink) {
       setSavedLink(savedZoomLink);
     }
@@ -24,14 +24,14 @@ const AdminPanel = ({addLink,deleteLink}) => {
     }
     addLink({link: zoomLink});
     
-    localStorage.setItem('zoomLink', zoomLink);
+    setLink(zoomLink)
     setSavedLink(zoomLink);
     setZoomLink('');
   };
 
   const handleDeleteLink = () => {
     if (window.confirm('Are you sure you want to delete the current Zoom link?')) {
-     
+      setLink('');
       localStorage.removeItem('zoomLink');
       setSavedLink('');
       deleteLink();
@@ -53,11 +53,11 @@ const AdminPanel = ({addLink,deleteLink}) => {
           Save Zoom Link
         </button>
       </div>
-      {savedLink && (
+      {link && (
         <div className="current-link">
           <h3>Current Active Link:</h3>
           <div className="link-actions">
-            <p>{savedLink}</p>
+            <p>{link}</p>
             <button onClick={handleDeleteLink} className="delete-link-button">
               Delete Link
             </button>
@@ -70,20 +70,20 @@ const AdminPanel = ({addLink,deleteLink}) => {
 };
 
 // Home Component
-const Home = () => {
+const Home = ({link}) => {
   const [activeZoomLink, setActiveZoomLink] = useState('');
 
   useEffect(() => {
     // Load zoom link from localStorage
-    const savedZoomLink = localStorage.getItem('zoomLink');
-    if (savedZoomLink) {
-      setActiveZoomLink(savedZoomLink);
+    
+    if (link) {
+      setActiveZoomLink(link);
     }
   }, []);
 
   const handleJoinClass = () => {
-    if (activeZoomLink) {
-      window.open(activeZoomLink, '_blank');
+    if (link) {
+      window.open(link, '_blank');
     } else {
       alert('No active class link available. Please check back later.');
     }
@@ -102,7 +102,7 @@ const Home = () => {
           
           <div className="class-status">
             <p className="status-text">
-              {activeZoomLink 
+              {link
                 ? "Class is ready to join! Click the button above."
                 : "No class is currently scheduled. Please check back later."}
             </p>
@@ -140,24 +140,26 @@ const Home = () => {
 
 // Main App Component
 function App() {
-
+  const [link, setLink] = useState('');
   
-
+ 
   const getLink = () => {
-    axios.get("http://43.204.214.221:3001/link")
+    axios.get("http://13.201.74.97:3001/link")
     .then((response) => {
       if(response.data[0] != undefined) {
         setLink(response.data[0].link);
-        localStorage.setItem('zoomLink', response.data[0].link);
       }
     })
     .catch((error) => {
       console.error("Error fetching link:", error);
     })
   };
+  useEffect(() => {
+    getLink();
+  },[]);
 
   const addLink = (data) => {
-    axios.post("http://43.204.214.221:3001/addlink",data)
+    axios.post("http://13.201.74.97:3001/addlink",data)
     .then((response) => {
 
     })
@@ -167,7 +169,7 @@ function App() {
   };
 
   const deleteLink = () => {
-    axios.delete("http://43.204.214.221:3001/deletelink")
+    axios.delete("http://13.201.74.97:3001/deletelink")
     .then((response) => {
 
     })
@@ -184,8 +186,8 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/admin" element={<AdminPanel addLink={(data) => addLink(data)} deleteLink={deleteLink} />} />
+        <Route path="/" element={<Home link={link}/>} />
+        <Route path="/admin" element={<AdminPanel addLink={(data) => addLink(data)} deleteLink={deleteLink} link={link} setLink={(data) => setLink(data)}/>} />
         </Routes>
       </div>
     </Router>
