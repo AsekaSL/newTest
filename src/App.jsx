@@ -144,7 +144,7 @@ function App() {
   
  
   const getLink = () => {
-    axios.get("http://13.201.74.97:3001/link")
+    axios.get("http://65.0.124.61:3001/link")
     .then((response) => {
       if(response.data[0] != undefined) {
         setLink(response.data[0].link);
@@ -159,7 +159,7 @@ function App() {
   },[]);
 
   const addLink = (data) => {
-    axios.post("http://13.201.74.97:3001/addlink",data)
+    axios.post("http://65.0.124.61:3001/addlink",data)
     .then((response) => {
 
     })
@@ -169,7 +169,7 @@ function App() {
   };
 
   const deleteLink = () => {
-    axios.delete("http://13.201.74.97:3001/deletelink")
+    axios.delete("http://65.0.124.61:3001/deletelink")
     .then((response) => {
 
     })
